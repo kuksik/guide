@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import Immutable from 'immutable';
+import firebase from './firebase';
 
 class Canvas extends Component{
   constructor(props) {
     super(props)
-    // console.log(props.route.line)
-    // console.log(Immutable.List(props.route.line))
     this.state = {
       pictureUrl: null,
       isDrawing: false,
@@ -18,12 +17,19 @@ class Canvas extends Component{
       lines: new Immutable.List()
     }
   }
-
-  componentDidMount() {
-    if (!this.props.route) return null;
-    this.props.firebase.storage().ref().child(this.props.route.picture).getDownloadURL().then((pictureUrl) => {
-      this.setState({ pictureUrl })
+  componentWillReceiveProps(nextProps) {
+    if (!nextProps.route) return null;
+    firebase.storage().ref().child(nextProps.route.picture).getDownloadURL().then((pictureUrl) => {
+      const imageRoutes = nextProps.selectedRroutes
+        ? nextProps.selectedRroutes.map(({ line }) => Immutable.fromJS(line))
+        : [];
+      const selectedRoute =  nextProps.route && nextProps.route.line
+        ? [Immutable.fromJS(nextProps.route.line)]
+        : [];
+      this.setState({ pictureUrl, selectedRoute, imageRoutes })
     }).catch((error) => { console.log(error) });
+
+
   }
   relativeCoordinatesForEvent(event) {
     const boundingRect = this.refs.drawArea.getBoundingClientRect();
@@ -33,8 +39,6 @@ class Canvas extends Component{
     });
   }
   handleMouseDown = (event) => {
-    console.log('handleMouseDown')
-    console.log(this.state)
     if (!this.state.isDrawing) return false;
     if (event.button !== 0) return false;
     const point = this.relativeCoordinatesForEvent(event);
@@ -46,7 +50,6 @@ class Canvas extends Component{
   buttonClick = (e) => {
     const isDrawing = this.state.isDrawing;
     if (isDrawing) {
-      console.log(this.props);
       this.props.firebase.database().ref(this.props.routePath).set({
         ...this.props.route,
         line: this.state.lines.toJS()
@@ -56,15 +59,14 @@ class Canvas extends Component{
         lines: new Immutable.List(),
         selectedRoute: [ ...prevState.selectedRoute, prevState.lines ]
       }));
-
-
-
     } else {
       this.setState({ isDrawing: !isDrawing });
     }
   }
   render(){
-    console.log(this)
+    if (!this.props.route) {
+      return (<h2>select route...</h2>)
+    }
     const style = { backgroundImage: `url('${this.state.pictureUrl}')` };
     return(
       <div>
