@@ -2,10 +2,28 @@ import React, { Component } from 'react';
 import Immutable from 'immutable';
 
 class Canvas extends Component{
-  state = {
-    isDrawing: false,
-    finishedLines: [],
-    lines: new Immutable.List()
+  constructor(props) {
+    super(props)
+    // console.log(props.route.line)
+    // console.log(Immutable.List(props.route.line))
+    this.state = {
+      pictureUrl: null,
+      isDrawing: false,
+      imageRoutes: props.selectedRroutes
+        ? props.selectedRroutes.map(({ line }) => Immutable.fromJS(line))
+        : [],
+      selectedRoute: props.route && props.route.line
+        ? [Immutable.fromJS(props.route.line)]
+        : [],
+      lines: new Immutable.List()
+    }
+  }
+
+  componentDidMount() {
+    if (!this.props.route) return null;
+    this.props.firebase.storage().ref().child(this.props.route.picture).getDownloadURL().then((pictureUrl) => {
+      this.setState({ pictureUrl })
+    }).catch((error) => { console.log(error) });
   }
   relativeCoordinatesForEvent(event) {
     const boundingRect = this.refs.drawArea.getBoundingClientRect();
@@ -28,20 +46,26 @@ class Canvas extends Component{
   buttonClick = (e) => {
     const isDrawing = this.state.isDrawing;
     if (isDrawing) {
+      console.log(this.props);
+      this.props.firebase.database().ref(this.props.routePath).set({
+        ...this.props.route,
+        line: this.state.lines.toJS()
+      });
       this.setState(prevState => ({
         isDrawing: !isDrawing,
         lines: new Immutable.List(),
-        finishedLines: [ ...prevState.finishedLines, prevState.lines ]
+        selectedRoute: [ ...prevState.selectedRoute, prevState.lines ]
       }));
+
+
+
     } else {
       this.setState({ isDrawing: !isDrawing });
     }
   }
   render(){
-    const style = {
-      backgroundImage: `url('pictures/skulptura/01.jpg')`
-      // 'url("https://drive.google.com/uc?id=1qqaxsJTW1aGQiyhMDkOj06csGVe6Ie8C")'
-    }
+    console.log(this)
+    const style = { backgroundImage: `url('${this.state.pictureUrl}')` };
     return(
       <div>
         <button
@@ -52,14 +76,14 @@ class Canvas extends Component{
         <div      
           id="drawArea"
           ref="drawArea"
-          className="image"
           style={style}
+          className="image"
           onMouseDown={this.handleMouseDown}
-          // onDoubleClick={this.handleDoubleClick}
         >
           <Drawing
             lines={this.state.lines}
-            finishedLines={this.state.finishedLines}
+            imageRoutes={this.state.imageRoutes}
+            finishedLines={this.state.selectedRoute}
           />
         </div>
       </div>
@@ -71,17 +95,26 @@ const Drawing = (props) => {
   const a = props.lines.map((line, index) => {
       return line.map(p => (`${p.get('x')},${p.get('y')}`))
   }).toJS().join(" ");
-  console.log(props)
   return(
     <svg className="drawing">
-      <polyline points={a}  strokeWidth="5" fill="none" stroke="red"   />
+      <polyline points={a}  strokeWidth="2" fill="none" stroke="yellow"/>
       {
         props.finishedLines.map((line) => {
           const b = line.map((l, index) => {
               return l.map(p => (`${p.get('x')},${p.get('y')}`))
           }).toJS().join(" ");
           return (
-            <polyline points={b} strokeWidth="5" fill="none" stroke="red"   />
+            <polyline points={b} strokeWidth="2" fill="none" stroke="yellow"   />
+          )
+        })
+      }
+      {
+        props.imageRoutes.map((line) => {
+          const b = line.map((l, index) => {
+              return l.map(p => (`${p.get('x')},${p.get('y')}`))
+          }).toJS().join(" ");
+          return (
+            <polyline points={b} strokeWidth="2" fill="none" stroke="red"   />
           )
         })
       }

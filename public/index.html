@@ -56,31 +56,5 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-    
-    
-    
-    <!-- The core Firebase JS SDK is always required and must be listed first -->
-<script src="https://www.gstatic.com/firebasejs/6.6.0/firebase-app.js"></script>
-<!-- <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-auth.js"></script> -->
-<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
-<!-- TODO: Add SDKs for Firebase products that you want to use
-     https://firebase.google.com/docs/web/setup#config-web-app -->
-
-<script>
-  // Your web app's Firebase configuration
-  var firebaseConfig = {
-    apiKey: "AIzaSyCX2fz_DLp7amDBaizrMthzjHe0NpRybjs",
-    authDomain: "ostriv-77c4f.firebaseapp.com",
-    databaseURL: "https://ostriv-77c4f.firebaseio.com",
-    projectId: "ostriv-77c4f",
-    storageBucket: "",
-    messagingSenderId: "201962601087",
-    appId: "1:201962601087:web:0dec2b4236c73bdffbdd4a"
-  };
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  const sectors = firebase.database().ref('/sectors');
-  sectors.on('value', function(snap) { console.log(snap.val()) });
-</script>
   </body>
 </html>

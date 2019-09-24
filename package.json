@@ -5,12 +5,14 @@
   "homepage": "https://aditya-sridhar.github.io/simple-reactjs-app",
   "dependencies": {
     "axios": "^0.18.1",
+    "firebase": "^6.6.2",
     "immutable": "^4.0.0-rc.12",
     "konva": "^4.0.8",
     "react": "^16.4.1",
     "react-bootstrap": "^0.32.1",
     "react-dom": "^16.4.1",
     "react-konva": "^16.9.0-0",
+    "react-modal": "^3.10.1",
     "react-router-dom": "^4.3.1",
     "react-scripts": "1.1.4"
   },

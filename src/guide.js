@@ -9,7 +9,7 @@ const guide = [
         "notUseSideRocks": "",
         "grade": "6а",
         "startType": 0,
-        "picture": "pictures/skulptura/02.jpg",
+        "picture": "sculpture/02.JPG",
       },
       {
         "sign": "b",
@@ -18,7 +18,7 @@ const guide = [
         "notUseSideRocks": "",
         "grade": "6c+",
         "startType": 0,
-        "picture": "pictures/skulptura/02.jpg",
+        "picture": "sculpture/02.JPG",
       },
       {
         "sign": "c",
@@ -27,7 +27,7 @@ const guide = [
         "notUseSideRocks": "",
         "grade": "6a",
         "startType": 0,
-        "picture": "pictures/skulptura/01.jpg",
+        "picture": "sculpture/01.JPG",
       },
       {
         "sign": "d.1",
@@ -36,7 +36,7 @@ const guide = [
         "notUseSideRocks": "",
         "grade": "6c",
         "startType": 0,
-        "picture": "pictures/skulptura/01.jpg"
+        "picture": "sculpture/01.JPG"
       },
       {
         "sign": "d.2",
@@ -45,7 +45,7 @@ const guide = [
         "notUseSideRocks": "",
         "grade": "6c",
         "startType": 0,
-        "picture": "pictures/skulptura/01.jpg",
+        "picture": "sculpture/01.JPG",
       },
       {
         "sign": "e",
@@ -54,7 +54,7 @@ const guide = [
         "notUseSideRocks": "",
         "grade": 5,
         "startType": 0,
-        "picture": "pictures/skulptura/01.jpg",
+        "picture": "sculpture/01.JPG",
       },
       {
         "sign": "f",
@@ -63,7 +63,7 @@ const guide = [
         "notUseSideRocks": "",
         "grade": "7c",
         "startType": 1,
-        "picture": "pictures/skulptura/06.jpg",
+        "picture": "sculpture/06.JPG",
       },
       {
         "sign": "g",
@@ -72,7 +72,7 @@ const guide = [
         "notUseSideRocks": "",
         "grade": "6a+",
         "startType": 0,
-        "picture": "pictures/skulptura/04.jpg",
+        "picture": "sculpture/04.JPG",
       },
       {
         "sign": "h",
@@ -81,7 +81,7 @@ const guide = [
         "notUseSideRocks": "",
         "grade": 5,
         "startType": 1,
-        "picture": "pictures/skulptura/03.jpg",
+        "picture": "sculpture/03.JPG",
       },
       {
         "sign": "i",
@@ -90,7 +90,7 @@ const guide = [
         "notUseSideRocks": "",
         "grade": "6b+",
         "startType": 0,
-        "picture": "pictures/skulptura/07.jpg",
+        "picture": "sculpture/07.JPG",
       },
       {
         "sign": "j.1",
@@ -99,7 +99,7 @@ const guide = [
         "notUseSideRocks": true,
         "grade": "project",
         "startType": 1,
-        "picture": "pictures/skulptura/05.jpg",
+        "picture": "sculpture/05.JPG",
       },
       {
         "sign": "j.2",
@@ -108,7 +108,7 @@ const guide = [
         "notUseSideRocks": "",
         "grade": "6a+",
         "startType": 1,
-        "picture": "pictures/skulptura/05.jpg",
+        "picture": "sculpture/05.JPG",
       },
       {
         "sign": "k1",
@@ -117,7 +117,7 @@ const guide = [
         "notUseSideRocks": true,
         "grade": "7b",
         "startType": 1,
-        "picture": "pictures/skulptura/05.jpg",
+        "picture": "sculpture/05.JPG",
       },
       {
         "sign": "k2",
@@ -126,7 +126,7 @@ const guide = [
         "notUseSideRocks": true,
         "grade": "project",
         "startType": 0,
-        "picture": "pictures/skulptura/05.jpg",
+        "picture": "sculpture/05.JPG",
       },
       {
         "sign": "l",
@@ -135,7 +135,7 @@ const guide = [
         "notUseSideRocks": "",
         "grade": "project",
         "startType": 1,
-        "picture": "pictures/skulptura/05.jpg",
+        "picture": "sculpture/05.JPG",
       },
       {
         "sign": "m",
@@ -144,7 +144,7 @@ const guide = [
         "notUseSideRocks": "",
         "grade": "project",
         "startType": 0,
-        "picture": "pictures/skulptura/05.jpg",
+        "picture": "sculpture/05.JPG",
       },
       {
         "sign": "n",
@@ -153,7 +153,7 @@ const guide = [
         "notUseSideRocks": "",
         "grade": "project",
         "startType": 0,
-        "picture": "pictures/skulptura/07.jpg",
+        "picture": "sculpture/07.JPG",
       },
       {
         "sign": "o",
@@ -162,7 +162,7 @@ const guide = [
         "notUseSideRocks": "",
         "grade": "project",
         "startType": 0,
-        "picture": "pictures/skulptura/07.jpg",
+        "picture": "sculpture/07.JPG",
       },
     ]
   },
