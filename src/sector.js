@@ -11,10 +11,12 @@ class Sector extends Component {
       fullscreen: false,
       imageRoutes: [],
       selectedRoute: null,
-      selectedRoutePath: null
+      selectedRoutePath: null,
+      selectedRouteIndex: 0
     };
   }
-  showRoute = (selectedRoute, routeIndex) => { 
+  showRoute = (selectedRoute, routeIndex) => {
+    const selectedRouteIndex = routeIndex;
     const selectedRoutePath = `${this.props.sectorPath}/routes/${routeIndex}`;
     const selectedImage = selectedRoute.picture;
     const imageRoutes = this.props.sectorInfo.routes.filter(({ picture, line }, index) => {
@@ -22,7 +24,7 @@ class Sector extends Component {
         routeIndex !== index && picture === selectedImage && line
       )
     });
-    this.setState({ selectedRoute, imageRoutes, selectedRoutePath });
+    this.setState({ selectedRoute, imageRoutes, selectedRoutePath, selectedRouteIndex });
   }
   getColor = ({ startType, high }) => {
     const color = startType === 0
@@ -31,6 +33,9 @@ class Sector extends Component {
     const border = !!high ? 'high' : '';
     return `circle ${color} ${border}`
   };
+  limitation = (route) => {
+    return `${route.notUseLeftRocks ? 'L' : ''} ${route.notUseRightRocks ? 'R' : ''}`
+  }
   render() {
     const {
       sectorPath,
@@ -39,22 +44,24 @@ class Sector extends Component {
         name: sectorName
       }
     } = this.props;
+    console.log(this.props.sectorInfo)
     return (
       <div key={sectorName} className="sector-container">
         <div className="routes-container">
-          <h1>{sectorName}</h1>
+          <h1>{sectorPath + 1} - {sectorName}, {routes.length}</h1>
           <table>
             <thead>
               <th className="cell">#</th>
               <th className="cell">name</th>
               <th className="cell">info</th>
-              <th className="cell">grade</th>
-              <th className="cell">image</th>
+              <th className="cell">grd</th>
+              <th className="cell">lmt</th>
+              <th className="cell">img</th>
             </thead>
             <tbody>
               {
                 routes.map((route, routeIndex) => (
-                  <tr key={routeIndex}>
+                  <tr key={routeIndex} className={`${this.state.selectedRouteIndex === routeIndex && 'selected_row'} row`}>
                     <td className="cell">{route.sign}</td>
                     <td className="cell">{route.name}</td>
                     <td className="cell">
@@ -62,11 +69,18 @@ class Sector extends Component {
                     </td>
                     <td className="cell">{route.grade}</td>
                     <td className="cell">
-                      <button
-                        onClick={() => this.showRoute(route, routeIndex )}
-                      >
-                        { route.line ? 'show' : 'draw'}
-                      </button>
+                      {this.limitation(route)}
+                    </td>
+                    <td className="cell">
+                      {
+                        route.picture
+                        ? (<button
+                          onClick={() => this.showRoute(route, routeIndex )}
+                        >
+                          { route.line ? 'show' : 'draw'}
+                        </button>)
+                        : ''
+                      }
                       </td>
                   </tr>
                 ))
