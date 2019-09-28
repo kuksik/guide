@@ -51,12 +51,12 @@ class App extends Component {
           <header className="App-header">        
             <h1 className="App-title">Ostriv Paskhy, {routesAmount}</h1>
           </header>
-          <div>
+          <div className='highlight_checkbox'>
             <input
-              onChange={this.handleHighLight}
               value={true}
               type="checkbox"
               name="highlight"
+              onChange={this.handleHighLight}
             />
             <label>Do not highlight selected lines</label></div>
           {this.showSectors()}

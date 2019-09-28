@@ -89,6 +89,15 @@
   flex-grow: 1;
 }
 
+.highlight_checkbox {
+  width: 50px;
+  right: 30px;
+  display: block;
+  position: fixed;
+}
+.image_panel {
+  margin-bottom: 10px;
+}
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
