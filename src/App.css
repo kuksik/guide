@@ -25,13 +25,26 @@
 .image {
   width: 900px;
   height: 900px;
+  position: relative;
   background-repeat: no-repeat;
-  background-size: contain;
-  /*background-image: url("https://drive.google.com/uc?id=1qqaxsJTW1aGQiyhMDkOj06csGVe6Ie8C")*/
+  background-size: 100%;
+}
+.route_sign {
+  z-index: 1;
+  cursor: pointer;
+  position: absolute;
+  width: 21px;
+  height: 21px;
+  color: aqua;
+  font-size: 14px;
+  background-color: darkred;
+  display: block;
+  border-radius: 50%;
+  /* padding-top: 0px; */
 }
 .drawing {
-  width: 700px;
-  height: 700px
+  width: 900px;
+  height: 900px
 }
 .row {
   margin: 6px;

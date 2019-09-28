@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import { BrowserRouter as Router } from 'react-router-dom';
-import guide from './guide';
+// import guide from './guide';
 import './App.css';
 import Sector from './sector';
 import firebase from './firebase';
-
+// import fbi from './firebaseImport'
+// fbi()
 class App extends Component {
   constructor(props) {
     super(props);
@@ -15,12 +16,12 @@ class App extends Component {
   }
   componentDidMount() {
     this.setState({ loading: true });
+    // this.setState({ loading: false, sectors: guide });
     firebase.database().ref().on('value', snapshot => {
-      this.setState({ loading: false, sectors: snapshot.val() });
-      // this.setState({ loading: false, sectors: guide });
+      this.setState({ loading: false, sectors: [snapshot.val()[0]] });
     });
   }
-  showSector = () => {
+  showSectors = () => {
     if (this.state.loading) {
       return <h1>Loading...</h1>
     } else {
@@ -28,8 +29,9 @@ class App extends Component {
         <div>
           {this.state.sectors.map((sector, sectorIndex) => (
             <Sector
+              key={sectorIndex}
               sectorInfo={sector}
-              sectorPath={sectorIndex}
+              sectorIndex={sectorIndex}
             />
           ))}
         </div>
@@ -44,7 +46,7 @@ class App extends Component {
           <header className="App-header">        
             <h1 className="App-title">Ostriv Paskhy, {routesAmount}</h1>
           </header>
-          {this.showSector()}
+          {this.showSectors()}
       </div>
     </Router>
     );

@@ -1,35 +1,15 @@
 import React, { Component } from 'react';
 import Immutable from 'immutable';
-import firebase from './firebase';
 
 class Canvas extends Component{
   constructor(props) {
     super(props)
     this.state = {
-      pictureUrl: null,
       isDrawing: false,
-      imageRoutes: props.selectedRroutes
-        ? props.selectedRroutes.map(({ line }) => Immutable.fromJS(line))
-        : [],
-      selectedRoute: props.route && props.route.line
-        ? [Immutable.fromJS(props.route.line)]
-        : [],
-      lines: new Immutable.List()
+      future: new Immutable.List(),
+      history: new Immutable.List(),
+      drawingLine: new Immutable.List(),
     }
-  }
-  componentWillReceiveProps(nextProps) {
-    if (!nextProps.route) return null;
-    firebase.storage().ref().child(nextProps.route.picture).getDownloadURL().then((pictureUrl) => {
-      const imageRoutes = nextProps.selectedRroutes
-        ? nextProps.selectedRroutes.map(({ line }) => Immutable.fromJS(line))
-        : [];
-      const selectedRoute =  nextProps.route && nextProps.route.line
-        ? [Immutable.fromJS(nextProps.route.line)]
-        : [];
-      this.setState({ pictureUrl, selectedRoute, imageRoutes })
-    }).catch((error) => { console.log(error) });
-
-
   }
   relativeCoordinatesForEvent(event) {
     const boundingRect = this.refs.drawArea.getBoundingClientRect();
@@ -44,84 +24,143 @@ class Canvas extends Component{
     const point = this.relativeCoordinatesForEvent(event);
 
     this.setState(prevState => ({
-      lines: prevState.lines.push(new Immutable.List([point])),
+      drawingLine: prevState.drawingLine.push(new Immutable.List([point])),
     }));
+    if (this.state.future.size > 0) {
+      this.setState({future: Immutable.List()});
+    }
+    if (! this.state.drawing) {
+        this.setState({history: this.state.history.push(this.state.drawingLine)});
+    }
+  }
+  undo =  () => {
+    if (this.state.history.size < 1) return;
+    this.setState(prevState => {
+      const history = prevState.history.pop();
+      return {
+        history,
+        future: prevState.future.push(prevState.drawingLine),
+        drawingLine: history.size === 0 ? new Immutable.List() : history.last(),
+    }});
+  }
+  redo = () => {
+    if (this.state.future.size < 1) return;
+    this.setState({
+      future: this.state.future.pop(),
+      drawingLine: this.state.future.last(),
+      history: this.state.history.push(this.state.drawingLine),
+    });
   }
   buttonClick = (e) => {
-    const isDrawing = this.state.isDrawing;
+    const { isDrawing } = this.state;
     if (isDrawing) {
-      this.props.firebase.database().ref(this.props.routePath).set({
-        ...this.props.route,
-        line: this.state.lines.toJS()
-      });
+      this.props.updateSelectedRouteLine({ line: this.state.drawingLine.toJS() });
       this.setState(prevState => ({
         isDrawing: !isDrawing,
-        lines: new Immutable.List(),
-        selectedRoute: [ ...prevState.selectedRoute, prevState.lines ]
+        future: new Immutable.List(),
+        history: new Immutable.List(),
+        drawingLine: new Immutable.List(),
       }));
     } else {
       this.setState({ isDrawing: !isDrawing });
     }
   }
-  render(){
-    if (!this.props.route) {
-      return (<h2>select route...</h2>)
+  renderRouteAssigns = () => {
+    const routes = [...this.props.imageRoutes, this.props.selectedRoute];
+    return routes.filter(({ line }) => !!line).map(({ sign, line }, index) => {
+      const positionShift = 10;
+      const x = line[0][0].x - positionShift;
+      const y = line[0][0].y - positionShift;
+      return <div key={index} className="route_sign" style={{top:`${y}px`, left:`${x}px`}}>{sign}</div>
+    })
+  }
+  renderPanel = () => {
+    return (
+      <div className='image_panel'>
+        <button onClick={this.buttonClick} >
+          {this.state.isDrawing ? 'save' : 'start' }
+        </button>
+        <button
+          onClick={this.undo} 
+          disabled={this.state.history.size < 1}
+        >
+          undo
+        </button>
+        <button
+          onClick={this.redo}
+          disabled={this.state.future.size < 1}
+        >
+          redo
+        </button>
+      </div>
+    )
+  }
+  getImageLines = () => {
+    return this.props.imageRoutes.filter(({ line }) => !!line).map(({ line }) => {
+      return Immutable.fromJS(line)
+    });
+  }
+  getSelectedLine = () => {
+    if (this.props.selectedRoute && this.props.selectedRoute.line) {
+      return Immutable.fromJS(this.props.selectedRoute.line);
     }
-    const style = { backgroundImage: `url('${this.state.pictureUrl}')` };
+    return new Immutable.List();
+  }
+  render(){
     return(
       <div>
-        <button
-          onClick={this.buttonClick} 
-        >
-          {this.state.isDrawing ? 'stop' : 'start' }
-        </button>
+        {this.renderPanel()}
         <div      
           id="drawArea"
           ref="drawArea"
-          style={style}
           className="image"
           onMouseDown={this.handleMouseDown}
+          style={{ backgroundImage: `url('${this.props.imageUrl}')` }}
         >
+          {this.renderRouteAssigns()}
           <Drawing
-            lines={this.state.lines}
-            imageRoutes={this.state.imageRoutes}
-            finishedLines={this.state.selectedRoute}
+            imageLines={this.getImageLines()}
+            drawingLine={this.state.drawingLine}
+            selectedLine={this.getSelectedLine()}
           />
         </div>
       </div>
     )
   }
 }
-
-const Drawing = (props) => {
-  const a = props.lines.map((line, index) => {
-      return line.map(p => (`${p.get('x')},${p.get('y')}`))
-  }).toJS().join(" ");
-  return(
-    <svg className="drawing">
-      <polyline points={a}  strokeWidth="2" fill="none" stroke="yellow"/>
-      {
-        props.finishedLines.map((line) => {
-          const b = line.map((l, index) => {
-              return l.map(p => (`${p.get('x')},${p.get('y')}`))
-          }).toJS().join(" ");
-          return (
-            <polyline points={b} strokeWidth="2" fill="none" stroke="yellow"   />
-          )
-        })
-      }
-      {
-        props.imageRoutes.map((line) => {
-          const b = line.map((l, index) => {
-              return l.map(p => (`${p.get('x')},${p.get('y')}`))
-          }).toJS().join(" ");
-          return (
-            <polyline points={b} strokeWidth="2" fill="none" stroke="red"   />
-          )
-        })
-      }
-    </svg>
-  )
-};
+const converLineToSvgFormat = (line) => (
+  line.map((l, index) => (l.map(p => (`${p.get('x')},${p.get('y')}`)))).toJS().join(" ")
+);
+const Drawing = (props) => (
+  <svg viewBox="0 0 900 900" className="drawing">
+    {
+      <polyline
+        fill="none"
+        strokeWidth="2"
+        stroke="yellow"
+        points={converLineToSvgFormat(props.drawingLine)} 
+      />
+    }
+    {
+      <polyline
+      fill="none"
+        strokeWidth="2"
+        stroke="yellow"
+        points={converLineToSvgFormat(props.selectedLine)}
+      />
+    }
+    {
+      props.imageLines.map((line, index) => (
+        <polyline
+          key={index}
+          fill="none"
+          strokeWidth="2"
+          stroke="darkred"
+          points={converLineToSvgFormat(line)}
+        />
+      ))
+    }
+  </svg>
+);
 
 export default Canvas;
