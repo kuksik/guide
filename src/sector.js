@@ -101,17 +101,18 @@ class Sector extends Component {
       <Canvas
         imageUrl={this.state.imageUrl}
         imageRoutes={this.state.imageRoutes}
+        useHighlight={this.props.useHighlight}
         selectedRoute={this.state.selectedRoute}
         updateSelectedRouteLine={this.updateSelectedRouteLine}
       />
     );
   }
   render() {
-    const { sectorPath, sectorInfo: { routes, name: sectorName } } = this.props;
+    const { sectorIndex, sectorInfo: { routes, name: sectorName } } = this.props;
     return (
       <div key={sectorName} className="sector-container">
         <div className="routes-container">
-          <h1>{sectorPath + 1} - {sectorName}, {routes.length}</h1>
+          <h1>{sectorIndex + 1} - {sectorName}, {routes.length}</h1>
           <table>
             <thead>
               <tr>

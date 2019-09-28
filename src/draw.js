@@ -122,6 +122,7 @@ class Canvas extends Component{
             imageLines={this.getImageLines()}
             drawingLine={this.state.drawingLine}
             selectedLine={this.getSelectedLine()}
+            useHighlight={this.props.useHighlight}
           />
         </div>
       </div>
@@ -145,7 +146,7 @@ const Drawing = (props) => (
       <polyline
       fill="none"
         strokeWidth="2"
-        stroke="yellow"
+        stroke={props.useHighlight ? "yellow" : 'darkred'}
         points={converLineToSvgFormat(props.selectedLine)}
       />
     }

@@ -12,13 +12,14 @@ class App extends Component {
     this.state = {
       sectors: [],
       loading: false,
+      useHighlight: true,
     };
   }
   componentDidMount() {
     this.setState({ loading: true });
     // this.setState({ loading: false, sectors: guide });
     firebase.database().ref().on('value', snapshot => {
-      this.setState({ loading: false, sectors: [snapshot.val()[0]] });
+      this.setState({ loading: false, sectors: snapshot.val() });
     });
   }
   showSectors = () => {
@@ -32,11 +33,15 @@ class App extends Component {
               key={sectorIndex}
               sectorInfo={sector}
               sectorIndex={sectorIndex}
+              useHighlight={this.state.useHighlight}
             />
           ))}
         </div>
       )
     }
+  }
+  handleHighLight = (event) => {
+    this.setState({ useHighlight: !event.target.checked })
   }
   render() {
     const routesAmount = this.state.sectors.reduce((a,s) => (a + s.routes.length), 0);
@@ -46,6 +51,14 @@ class App extends Component {
           <header className="App-header">        
             <h1 className="App-title">Ostriv Paskhy, {routesAmount}</h1>
           </header>
+          <div>
+            <input
+              onChange={this.handleHighLight}
+              value={true}
+              type="checkbox"
+              name="highlight"
+            />
+            <label>Do not highlight selected lines</label></div>
           {this.showSectors()}
       </div>
     </Router>
